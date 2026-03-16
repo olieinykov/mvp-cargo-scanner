@@ -375,6 +375,11 @@ def run_audit(bol: ImageAnalysis, marker: ImageAnalysis, cargo: ImageAnalysis) -
 app = FastAPI(title="Hazmat Image Analysis API", version="0.2.0")
 
 
+@app.get("/health")
+async def health_check():
+    return JSONResponse({"status": "ok"})
+
+
 @app.post("/analyze-image", response_model=AnalyzeImageResponse)
 async def analyze_image(
     bolPhoto: UploadFile = File(...),
