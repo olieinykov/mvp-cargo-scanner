@@ -12,11 +12,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-export interface UploadImagesFormValues extends UploadImagesSchema {}
+export type UploadImagesFormValues = UploadImagesSchema;
 
 export function UploadImagesForm() {
   const [responseText, setResponseText] = React.useState<string>("");
   const [submitError, setSubmitError] = React.useState<string>("");
+  const [fileInputsKey, setFileInputsKey] = React.useState<number>(0);
 
   const form = useForm<UploadImagesFormValues>({
     resolver: zodResolver(uploadImagesSchema),
@@ -37,7 +38,7 @@ export function UploadImagesForm() {
     try {
       const formData = buildAnalyzeSignsFormData(values);
 
-      const res = await fetch("http://127.0.0.1:8000/analyze-signs", {
+      const res = await fetch("http://127.0.0.1:8000/analyze-image", {
         method: "POST",
         body: formData,
       });
@@ -74,7 +75,12 @@ export function UploadImagesForm() {
                 <FormItem>
                   <FormLabel>BOL photo</FormLabel>
                   <FormControl>
-                    <Input type="file" accept="image/*" onChange={(e) => field.onChange(e.target.files?.[0])} />
+                    <Input
+                      key={`bol-${fileInputsKey}`}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => field.onChange(e.target.files?.[0] ?? undefined)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -88,7 +94,12 @@ export function UploadImagesForm() {
                 <FormItem>
                   <FormLabel>Marker photo</FormLabel>
                   <FormControl>
-                    <Input type="file" accept="image/*" onChange={(e) => field.onChange(e.target.files?.[0])} />
+                    <Input
+                      key={`marker-${fileInputsKey}`}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => field.onChange(e.target.files?.[0] ?? undefined)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -102,7 +113,12 @@ export function UploadImagesForm() {
                 <FormItem>
                   <FormLabel>Cargo photo</FormLabel>
                   <FormControl>
-                    <Input type="file" accept="image/*" onChange={(e) => field.onChange(e.target.files?.[0])} />
+                    <Input
+                      key={`cargo-${fileInputsKey}`}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => field.onChange(e.target.files?.[0] ?? undefined)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -124,6 +140,7 @@ export function UploadImagesForm() {
                 variant="outline"
                 onClick={() => {
                   form.reset();
+                  setFileInputsKey((k) => k + 1);
                   setResponseText("");
                   setSubmitError("");
                 }}
