@@ -5,6 +5,7 @@ from typing import Any, Literal
 import re
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ValidationError
 from openai import OpenAI, OpenAIError
@@ -374,6 +375,18 @@ def run_audit(bol: ImageAnalysis, marker: ImageAnalysis, cargo: ImageAnalysis) -
 
 app = FastAPI(title="Hazmat Image Analysis API", version="0.2.0")
 
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,            # Разрешает запросы с твоего Next.js
+    allow_credentials=True,
+    allow_methods=["*"],              # Разрешает все методы (GET, POST и т.д.)
+    allow_headers=["*"],              # Разрешает все заголовки
+)
 
 @app.get("/health")
 async def health_check():
